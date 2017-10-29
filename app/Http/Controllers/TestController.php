@@ -15,12 +15,13 @@ class TestController extends Controller
 
     public function index()
     {
+        echo "test";
         // Redis::set('name', 'Taylor');
         // condole.log($values = Redis::lrange('names', 5, 10));
-        Cache::put('key','knack',1);
-        $value = Cache::get('key');
-        dump($value);
-        return view('test.map');
+        // Cache::put('key','knack',1);
+        // $value = Cache::get('key');
+        // dump($value);
+        // return view('test.map');
     }
 }
 

@@ -107,9 +107,9 @@
 //         this.$localStorage.remove('foo');
 //     }
 // });
-import Vue from 'vue';
-import VueLocalStorage from 'vue-local-storage';
-Vue.Use(VueLocalStorage);
+// import Vue from 'vue';
+// import VueLocalStorage from 'vue-local-storage';
+// Vue.Use(VueLocalStorage);
   var app = new Vue({
     el: '#app',
     data: {
