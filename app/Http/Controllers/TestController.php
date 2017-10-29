@@ -21,7 +21,7 @@ class TestController extends Controller
         // Cache::put('key','knack',1);
         // $value = Cache::get('key');
         // dump($value);
-        return view('test.t');
+        return view('t');
     }
 }
 
