@@ -86,15 +86,14 @@
 
 // const Vue = require('vue');
 // const VueLocalStorage = require('vue-local-storage');
-// import Vue from 'vue';
-// import VueLocalStorage from 'vue-local-storage';
+
 
 // var Vue = require('vue');
 // var VueLocalStorage = require('vue-local-storage')
 // include 'vue-local-storage';
 // var VueAsyncData = require('vue-local-storage');
 // const VueLocalStorage = require('vue-local-storage.vue');
-// Vue.Use(VueLocalStorage);
+
 // Vue.localStorage.set('bar', 'baz');
 // Vue.localStorage.remove('bar');
 // new Vue({
@@ -108,7 +107,9 @@
 //         this.$localStorage.remove('foo');
 //     }
 // });
-
+import Vue from 'vue';
+import VueLocalStorage from 'vue-local-storage';
+Vue.Use(VueLocalStorage);
   var app = new Vue({
     el: '#app',
     data: {
