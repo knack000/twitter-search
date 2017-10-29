@@ -110,40 +110,40 @@
 // import Vue from 'vue';
 // import VueLocalStorage from 'vue-local-storage';
 // Vue.Use(VueLocalStorage);
-  // var app = new Vue({
-  //   el: '#app',
-  //   data: {
-  //     searchCity: '',
-  //     items: ''
-  //   },
-  //   methods: {
-  //     getTweets: (function(){
-  //       console.log("55")
-  //       var app = this
-  //       var config = 
-  //       {
-  //         headers: 
-  //         {
-  //         'Access-Control-Allow-Headers': 'origin x-requested-with, content-type',
-  //         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  //         'Access-Control-Allow-Headers': 'Content-Type, Accept',
-  //         'Content-Type': 'application/x-www-form-urlencoded',
-  //         'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAACiJ2wAAAAAAaixVPIc9iNSMwEXD8B7odbhjTZU%3DHyba6etQh0SpxlOzHAarWta1jKcDBwrpD8vD67ieiJYYXLYdjM'
-  //         }
-  //       };
-  //       axios.get('https://api.twitter.com/1.1/search/tweets.json?q=' + this.searchCity +'&count=4' , config)
-  //       // axios.get('http://ziptasticapi.com/76520')
-  //               .then(function (response) {
-  //                 app.items = response
+  var app = new Vue({
+    el: '#app',
+    data: {
+      searchCity: '',
+      items: ''
+    },
+    methods: {
+      getTweets: (function(){
+        console.log("55")
+        var app = this
+        var config = 
+        {
+          headers: 
+          {
+          'Access-Control-Allow-Headers': 'origin x-requested-with, content-type',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Accept',
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAACiJ2wAAAAAAaixVPIc9iNSMwEXD8B7odbhjTZU%3DHyba6etQh0SpxlOzHAarWta1jKcDBwrpD8vD67ieiJYYXLYdjM'
+          }
+        };
+        axios.get('https://api.twitter.com/1.1/search/tweets.json?q=' + this.searchCity +'&count=4' , config)
+        // axios.get('http://ziptasticapi.com/76520')
+                .then(function (response) {
+                  app.items = response
                   
-  //                 console.log(app.items.data)
-  //               })
-  //               .catch(function (error) {
-  //                 app.items = "Invalid Tweets"
-  //               })
-  //       })
-  //     }
-  // })
+                  console.log(app.items.data)
+                })
+                .catch(function (error) {
+                  app.items = "Invalid Tweets"
+                })
+        })
+      }
+  })
 
   var map, infoWindow;
       function initMap() {
