@@ -963,12 +963,14 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(10);
-module.exports = __webpack_require__(42);
+module.exports = __webpack_require__(45);
 
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 /**
@@ -980,14 +982,16 @@ module.exports = __webpack_require__(42);
 __webpack_require__(11);
 
 window.Vue = __webpack_require__(35);
+window.VueLocalStorage = __webpack_require__(38);
 
+Vue.Use(VueLocalStorage);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', __webpack_require__(38));
+Vue.component('example', __webpack_require__(41));
 
 var app = new Vue({
   el: '#app'
@@ -997,9 +1001,10 @@ var app = new Vue({
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
 
 window._ = __webpack_require__(12);
-
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
  * for JavaScript based Bootstrap features such as modals and tabs. This
@@ -42513,30 +42518,300 @@ exports.clearImmediate = clearImmediate;
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var disposed = false
-var normalizeComponent = __webpack_require__(39)
-/* script */
-var __vue_script__ = __webpack_require__(40)
-/* template */
-var __vue_template__ = __webpack_require__(41)
-/* template functional */
-  var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _storage = __webpack_require__(39);
+
+var _storage2 = _interopRequireDefault(_storage);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var VueLocalStorage = function () {
+  function VueLocalStorage() {
+    _classCallCheck(this, VueLocalStorage);
+
+    this.storage = _storage2.default;
+    this.clear();
+  }
+
+  _createClass(VueLocalStorage, [{
+    key: 'install',
+    value: function install(Vue) {
+      Vue.localStorage = Vue.prototype.$localStorage = this;
+    }
+  }, {
+    key: 'set',
+    value: function set(name, value) {
+      var expire = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      var keyName = 'vuels__' + name;
+      var data = JSON.stringify({ value: value, expire: expire > 0 ? new Date().getTime() + expire : expire });
+
+      if (typeof this.storage.type !== 'undefined' && this.storage.type === 'cookie') {
+        this.storage.setItem(keyName, data, expire);
+      } else {
+        this.storage.setItem(keyName, data);
+      }
+    }
+  }, {
+    key: 'get',
+    value: function get(name) {
+      var item = this.storage.getItem('vuels__' + name);
+      if (null !== item) return JSON.parse(item).value;
+      return null;
+    }
+  }, {
+    key: 'remove',
+    value: function remove(name) {
+      return this.storage.removeItem('vuels__' + name);
+    }
+  }, {
+    key: 'key',
+    value: function key(index) {
+      return this.storage.key(index);
+    }
+
+    /**
+     * Removes expired items
+     */
+
+  }, {
+    key: 'clear',
+    value: function clear() {
+      if (this.length === 0) {
+        return;
+      }
+
+      for (var i = 0; i < this.length; i++) {
+        var key = this.storage.key(i);
+
+        if (false === /vuels__/i.test(key)) {
+          continue;
+        }
+
+        var current = JSON.parse(this.storage.getItem(key));
+
+        if (current.expire > 0 && current.expire < new Date().getTime()) {
+          this.storage.removeItem(key);
+        }
+      }
+    }
+  }, {
+    key: 'length',
+    get: function get() {
+      return this.storage.length;
+    }
+  }]);
+
+  return VueLocalStorage;
+}();
+
+if (( false ? 'undefined' : _typeof(exports)) === 'object') {
+  module.exports = new VueLocalStorage();
+} else if (window && window.Vue) {
+  window.Vue.use(new VueLocalStorage());
+}
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _cookie = __webpack_require__(40);
+
+var _cookie2 = _interopRequireDefault(_cookie);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var storage = void 0;
+
+var isLocalStorageAvailable = function isLocalStorageAvailable() {
+  try {
+    var randomKey = 'testvuels';
+    window.localStorage.setItem(randomKey, '1');
+    window.localStorage.removeItem(randomKey);
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+if (isLocalStorageAvailable()) {
+  storage = window.localStorage;
+} else {
+  storage = _cookie2.default;
+}
+
+exports.default = storage;
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*\
+ |*|
+ |*|	:: cookies.js ::
+ |*|
+ |*|	A complete cookies reader/writer framework with full unicode support.
+ |*|
+ |*|	Revision #3 - July 13th, 2017
+ |*|
+ |*|	https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+ |*|	https://developer.mozilla.org/User:fusionchess
+ |*|	https://github.com/madmurphy/cookies.js
+ |*|
+ |*|	This framework is released under the GNU Public License, version 3 or later.
+ |*|	http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ |*|
+ |*|	Syntaxes:
+ |*|
+ |*|	* docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
+ |*|	* docCookies.getItem(name)
+ |*|	* docCookies.removeItem(name[, path[, domain]])
+ |*|	* docCookies.hasItem(name)
+ |*|	* docCookies.keys()
+ |*|
+ \*/
+
+exports.default = {
+
+  /**
+   * Property to check that cookie polyfill was used
+   */
+  type: 'cookie',
+
+  keysCache: null,
+
+  getItem: function getItem(sKey) {
+    if (!sKey) {
+      return null;
+    }
+
+    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+  },
+
+  setItem: function setItem(sKey, sValue, vEnd) {
+    var sPath = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '/';
+    var sDomain = arguments[4];
+    var bSecure = arguments[5];
+
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+      return false;
+    }
+
+    var sExpires = "";
+
+    if (vEnd) {
+      switch (vEnd.constructor) {
+        case Number:
+          sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+          /*
+           Note: Despite officially defined in RFC 6265, the use of `max-age` is not compatible with any
+           version of Internet Explorer, Edge and some mobile browsers. Therefore passing a number to
+           the end parameter might not work as expected. A possible solution might be to convert the the
+           relative time to an absolute time. For instance, replacing the previous line with:
+           */
+          /*
+           sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; expires=" + (new Date(vEnd * 1e3 + Date.now())).toUTCString();
+           */
+          break;
+        case String:
+          sExpires = "; expires=" + vEnd;
+          break;
+        case Date:
+          sExpires = "; expires=" + vEnd.toUTCString();
+          break;
+      }
+    }
+    document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+
+    this.keysCache = null;
+    return true;
+  },
+
+  removeItem: function removeItem(sKey, sPath, sDomain) {
+    if (!this.hasItem(sKey)) {
+      return false;
+    }
+
+    document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
+
+    this.keysCache = null;
+    return true;
+  },
+
+  hasItem: function hasItem(sKey) {
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+      return false;
+    }
+
+    return new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=").test(document.cookie);
+  },
+
+  keys: function keys() {
+    var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+
+    for (var nLen = aKeys.length, nIdx = 0; nIdx < nLen; nIdx++) {
+      aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+    }
+
+    this.keysCache = aKeys;
+    return aKeys;
+  },
+
+  /**
+   * Get length. For compatability with localStorage
+   */
+  get length() {
+    return this.keys().length;
+  },
+
+  key: function key(index) {
+    if (null === this.keysCache) {
+      this.keysCache = this.keys();
+    }
+
+    return this.keysCache[index];
+  }
+};
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(42)(
+  /* script */
+  __webpack_require__(43),
+  /* template */
+  __webpack_require__(44),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
 )
-Component.options.__file = "resources\\assets\\js\\components\\Example.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
+Component.options.__file = "C:\\xampp\\htdocs\\blog\\resources\\assets\\js\\components\\Example.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] Example.vue: functional components are not supported with templates, they should use render functions.")}
 
 /* hot reload */
 if (false) {(function () {
@@ -42548,32 +42823,24 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-5e8d45e4", Component.options)
   } else {
     hotAPI.reload("data-v-5e8d45e4", Component.options)
-' + '  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
+  }
 })()}
 
 module.exports = Component.exports
 
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports) {
 
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
+// this module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle
 
 module.exports = function normalizeComponent (
   rawScriptExports,
   compiledTemplate,
-  functionalTemplate,
-  injectStyles,
   scopeId,
-  moduleIdentifier /* server only */
+  cssModules
 ) {
   var esModule
   var scriptExports = rawScriptExports = rawScriptExports || {}
@@ -42594,12 +42861,6 @@ module.exports = function normalizeComponent (
   if (compiledTemplate) {
     options.render = compiledTemplate.render
     options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
   }
 
   // scopedId
@@ -42607,55 +42868,14 @@ module.exports = function normalizeComponent (
     options._scopeId = scopeId
   }
 
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
+  // inject cssModules
+  if (cssModules) {
+    var computed = Object.create(options.computed || null)
+    Object.keys(cssModules).forEach(function (key) {
+      var module = cssModules[key]
+      computed[key] = function () { return module }
+    })
+    options.computed = computed
   }
 
   return {
@@ -42667,11 +42887,15 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 //
 //
 //
@@ -42689,57 +42913,43 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-/* harmony default export */ __webpack_exports__["default"] = ({
+exports.default = {
     mounted: function mounted() {
         console.log('Component mounted.');
     }
-});
+};
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-8 col-md-offset-2" }, [
-          _c("div", { staticClass: "panel panel-default" }, [
-            _c("div", { staticClass: "panel-heading" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "panel-body" }, [
-              _vm._v(
-                "\n                    I'm an example component!\n                "
-              )
-            ])
-          ])
-        ])
-      ])
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "container"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-8 col-md-offset-2"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("Example Component")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_vm._v("\n                    I'm an example component!\n                ")])])])])])
+}]}
+module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-5e8d45e4", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-5e8d45e4", module.exports)
   }
 }
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,9 +16,14 @@ Route::get('/', function () {
 
 Route::get('testCon/{id}', 'TestController@hello');
 
+// Route::get('tweets', function()
+// {
+// 	return Twitter::getSearch(['q' => 'dc', 'count' => 4]);
+// });
+
 Route::get('testmap', 'TestController@index');
 
-
+Route::get('getTweets/{cityName}', 'TestController@getTweets');
 
 Auth::routes();
 

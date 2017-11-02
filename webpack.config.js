@@ -1,8 +1,8 @@
 module.exports = {  
-    entry: './main.js',
+    entry: 'public/js/map.js',
     output: {
         path: __dirname + '/dist',
-        filename: 'main.js'
+        filename: 'public/js/map.js'
     },
     module: {
         loaders: [

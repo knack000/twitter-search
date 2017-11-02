@@ -37,20 +37,22 @@
   <div class ="col-lg-4">
   <ul class="list-group" style="width: 100%;margin-top: 15px;">
   <li class="list-group-item ">
-    <img class="img-circle pull-left" src="http://pbs.twimg.com/profile_images/922829526563897344/wRNzXR2w_normal.jpg" />
+    <!-- <img class="img-circle pull-left" src="http://pbs.twimg.com/profile_images/922829526563897344/wRNzXR2w_normal.jpg" /> -->
         <div class="test" style="margin-left: 4pc">
         <p>Post title<span> @NjYg_</span></p>
         <p>post desc post desc post desc post desc post desc post desc post desc </p>
   </li>
-  <li class="list-group-item">
-    <!-- <img class="img-circle pull-left" src= @{{}} />
+  <li class="list-group-item"  v-for="item in items" >
+    <!-- <!-- <img class="img-circle pull-left" srcnpm install= "http://pbs.twimg.com/profile_images/922829526563897344/wRNzXR2w_normal.jpg" /> --!> -->
         <div class="test" style="margin-left: 4pc">
-        <p>@{{items}}<span> @{{}} </span></p>
-        <p>p@{{}}</p> -->
-    <img class="img-circle pull-left" src="http://pbs.twimg.com/profile_images/922829526563897344/wRNzXR2w_normal.jpg" />
-        <div class="test" style="margin-left: 4pc">
-        <p>items<span> @NjYg_</span></p>
-        <p>post desc post desc post desc post desc post desc post desc post desc </p>
+        @{{item}}
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        <!-- <p>@{{item.statuses.id}}<span> @{{item.message}} </span></p>
+        <p>@{{item.message}}</p> -->
+    <!-- <!-- <img class="img-circle pull-left" src="http://pbs.twimg.com/profile_images/922829526563897344/wRNzXR2w_normal.jpg" /> -->
+        <!-- <div class="test" style="margin-left: 4pc">
+        <p>ss<span> @NYjg_</span></p>
+        <p>post desc post desc post desc post desc post desc post desc post desc </p> -->
   </li>
   <li class="list-group-item">Morbi leo risus</li>
   <li class="list-group-item">Porta ac consectetur ac</li>
@@ -60,11 +62,10 @@
 </div>
 </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <!-- <script src="https://unpkg.com/vue"></script> -->
-  <script src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue@2.5.2/dist/vue.js"></script>
   <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
   <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
-  <!-- <script src="dist/vue.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDT0h00z9qiFOby4aEB1iugmpSu2daueyM&libraries=places&callback=initMap"
         async defer></script>
   <!-- <script src="/node_modules/vue-cookie/build/vue-cookie.js'"></script> -->
@@ -72,8 +73,46 @@
   </body>
 </html>
 
-<script>
-
+<script type="text/babel">
+var apiURL = 'http://localhost:8000/getTweets/dc';
+  var app = new Vue({
+    el: '#app',
+    data: {
+      searchCity: '',
+      items: '',
+      itemss: [
+      { message: 'Foo' },
+      { message: 'Bar' }
+    ]
+    },
+  //   created: function () {
+  //   this.fetchData();
+  // },
+    methods: {
+    // fetchData: function () {
+    // var self = this
+    // $.getJson( apiURL, function( data ) {
+    //     self.items = data
+    //     console.log(self.items)
+    //     }).bind(this)
+    //   },
+      getTweets: (function(){
+        var app = this
+        axios.get('http://localhost:8000/getTweets/dc')
+                .then(function (response) {
+                  app.loading = true
+                  app.items = response
+                  console.log(app.items)
+                })
+                .catch(function (error) {
+                  app.items = "Invalid Tweets"
+                  console.log(error)
+                })
+        })
+      }
+  })
+  </script>
+  <script>
 // const cors = require('cors');
 // const gulp = require('gulp');
 // const traceur = require('gulp-traceur');
@@ -110,40 +149,23 @@
 // import Vue from 'vue';
 // import VueLocalStorage from 'vue-local-storage';
 // Vue.Use(VueLocalStorage);
-  var app = new Vue({
-    el: '#app',
-    data: {
-      searchCity: '',
-      items: ''
-    },
-    methods: {
-      getTweets: (function(){
-        console.log("55")
-        var app = this
-        var config = 
-        {
-          headers: 
-          {
-          'Access-Control-Allow-Headers': 'origin x-requested-with, content-type',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Accept',
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAACiJ2wAAAAAAaixVPIc9iNSMwEXD8B7odbhjTZU%3DHyba6etQh0SpxlOzHAarWta1jKcDBwrpD8vD67ieiJYYXLYdjM'
-          }
-        };
-        axios.get('https://api.twitter.com/1.1/search/tweets.json?q=' + this.searchCity +'&count=4' , config)
+
+          // console.log("55")
+        // var config = 
+        // {
+        //   cityName: app.searchCity
+        //   headers: 
+        //   {
+        //   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        //   'Access-Control-Allow-Headers': 'Content-Type, Accept',
+        //   'Content-Type': 'application/x-www-form-urlencoded',
+        //   'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAACiJ2wAAAAAAaixVPIc9iNSMwEXD8B7odbhjTZU%3DHyba6etQh0SpxlOzHAarWta1jKcDBwrpD8vD67ieiJYYXLYdjM'
+        //   }
+        // };
+        // axios.get('https://api.twitter.com/1.1/search/tweets.json?q=' + this.searchCity +'&count=4' , config)
         // axios.get('http://ziptasticapi.com/76520')
-                .then(function (response) {
-                  app.items = response
-                  
-                  console.log(app.items.data)
-                })
-                .catch(function (error) {
-                  app.items = "Invalid Tweets"
-                })
-        })
-      }
-  })
+        </script>
+  <script>
 
   var map, infoWindow;
       function initMap() {
